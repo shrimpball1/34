@@ -103,7 +103,7 @@ std::vector< std::string > Split(const std::string &str, const std::string &splt
     std::string splt1 = splt.empty() ? " " : splt;
     std::vector<std::string> result;
     size_t start = 0, end = 0;
-    while ((end = str.find(splt1, start)) != std::string::npos) {
+    while((end = str.find(splt1, start)) != std::string::npos){
         result.push_back(str.substr(start, end - start));
         start = end + splt1.size();
     }
@@ -126,6 +126,16 @@ std::string Join(const std::string &str, const std::vector< std::string > &vect)
 std::string ExpandTabs(const std::string &str, int tabsize) noexcept{
     std::string result;
     int pos = 0;
+
+    if(tabsize <= 0){
+        for(char ch : str){
+            if(ch != '\t'){
+                result.push_back(ch);
+            }
+        }
+        return result; 
+    }
+    
     for(size_t i = 0; i < str.size(); ++i){
         if(str[i] == '\t') {
             int spaces = tabsize - (pos % tabsize);
