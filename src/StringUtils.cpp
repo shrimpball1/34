@@ -98,6 +98,19 @@ std::string Replace(const std::string &str, const std::string &old, const std::s
 }
 
 
+std::vector< std::string > Split(const std::string &str, const std::string &splt) noexcept{
+    
+    std::string splt1 = splt.empty() ? " " : splt;
+    std::vector<std::string> result;
+    size_t start = 0, end = 0;
+    while ((end = str.find(splt1, start)) != std::string::npos) {
+        result.push_back(str.substr(start, end - start));
+        start = end + splt1.size();
+    }
+    result.push_back(str.substr(start));
+    return result;
+}
+
 
 std::string Join(const std::string &str, const std::vector< std::string > &vect) noexcept{
     std::string result;
@@ -130,7 +143,6 @@ std::string ExpandTabs(const std::string &str, int tabsize) noexcept{
 
     return result;
 }
-
 
 
 int EditDistance(const std::string &left, const std::string &right, bool ignorecase) noexcept{

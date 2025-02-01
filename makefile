@@ -1,5 +1,5 @@
 CXX        = g++
-CXXFLAGS   = -std=c++17
+CXXFLAGS   = -std=c++17 -Iinclude
 
 GTEST_DIR  = /mnt/f/googletest/build/lib
 GTEST_INC  = /mnt/f/googletest/googletest/include
@@ -8,18 +8,31 @@ INC_DIRS   = -I$(GTEST_INC) -Iinclude
 
 LDLIBS     = -L$(GTEST_DIR) -lgtest -lgtest_main -lpthread
 
-TARGET     = StringUtilsTest
+TARGET     = bin/StringUtilsTest
 
 SRCS       = src/StringUtils.cpp \
              testsrc/StringUtilsTest.cpp
 
-all: $(TARGET)
+OBJ_DIR    = obj
+BIN_DIR    = bin
 
-$(TARGET): $(SRCS:.cpp=.o)
+OBJS       = $(patsubst src/%.cpp, $(OBJ_DIR)/%.o, $(filter src/%, $(SRCS))) \
+             $(patsubst testsrc/%.cpp, $(OBJ_DIR)/%.o, $(filter testsrc/%, $(SRCS)))
+
+all: $(BIN_DIR) $(OBJ_DIR) $(TARGET)
+
+$(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ $(LDLIBS) -o $@
-
-%.o: %.cpp
+$(OBJ_DIR)/%.o: src/%.cpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) $(INC_DIRS) -c $< -o $@
+$(OBJ_DIR)/%.o: testsrc/%.cpp | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) $(INC_DIRS) -c $< -o $@
 
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
+
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
 clean:
-	rm -f $(TARGET) src/*.o testsrc/*.o
+	rm -rf $(BIN_DIR) $(OBJ_DIR)
